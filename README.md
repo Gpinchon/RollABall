@@ -3,3 +3,5 @@ A simple "game" writen a long time ago to learn BabylonJS and updated recently t
 # TODO
 - Make the interface truly interactive.
 - Make the interface more appealing using CSS3 animations and latest features.
+- Clean up code
+- Put the Interface class in an other file
