@@ -268,18 +268,16 @@ define (
 						var finalVelocity = player.physicsImpostor.getLinearVelocity();
 						var	forward = (player.position.subtract(new BABYLON.Vector3(campos.x, player.position.y, campos.z)).normalize());
 						var right = BABYLON.Vector3.Cross(forward, new BABYLON.Vector3(0, 1, 0))
+						moveHorizontal = 0;
+						moveVertical = 0;
 						if (keys["ArrowLeft"])
-							moveHorizontal = 1;
-						else if (keys["ArrowRight"])
-							moveHorizontal = -1;
-						else
-							moveHorizontal = 0;
+							moveHorizontal ++;
+						if (keys["ArrowRight"])
+							moveHorizontal --;
 						if (keys["ArrowUp"])
-							moveVertical = 1;
-						else if (keys["ArrowDown"])
-							moveVertical = -1;
-						else
-							moveVertical = 0;
+							moveVertical ++;
+						if (keys["ArrowDown"])
+							moveVertical --;
 						forward = forward.scale(moveVertical).scale(0.1);
 						right = right.scale(moveHorizontal).scale(0.1);
 						finalVelocity = finalVelocity.add(forward);
