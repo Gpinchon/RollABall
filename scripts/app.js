@@ -264,10 +264,6 @@ define (
 					var	moveVertical = 0;
 					var moveHorizontal = 0;
 					this.scene.registerBeforeRender(function () {
-						var campos = app.scene.activeCamera.position;
-						var finalVelocity = player.physicsImpostor.getLinearVelocity();
-						var	forward = (player.position.subtract(new BABYLON.Vector3(campos.x, player.position.y, campos.z)).normalize());
-						var right = BABYLON.Vector3.Cross(forward, new BABYLON.Vector3(0, 1, 0))
 						moveHorizontal = 0;
 						moveVertical = 0;
 						if (keys["ArrowLeft"])
@@ -278,13 +274,20 @@ define (
 							moveVertical ++;
 						if (keys["ArrowDown"])
 							moveVertical --;
-						forward = forward.scale(moveVertical).scale(0.1);
-						right = right.scale(moveHorizontal).scale(0.1);
-						finalVelocity = finalVelocity.add(forward);
-						finalVelocity = finalVelocity.add(right);
-						finalVelocity.x = finalVelocity.x.clamp(-4, 4);
-						finalVelocity.z = finalVelocity.z.clamp(-4, 4);
-						player.physicsImpostor.setLinearVelocity(finalVelocity, player.getAbsolutePosition());
+						if (moveHorizontal || moveVertical)
+						{
+							var campos = app.scene.activeCamera.position;
+							var finalVelocity = player.physicsImpostor.getLinearVelocity();
+							var	forward = (player.position.subtract(new BABYLON.Vector3(campos.x, player.position.y, campos.z)).normalize());
+							var right = BABYLON.Vector3.Cross(forward, new BABYLON.Vector3(0, 1, 0));
+							forward = forward.scale(moveVertical).scale(0.1);
+							right = right.scale(moveHorizontal).scale(0.1);
+							finalVelocity = finalVelocity.add(forward);
+							finalVelocity = finalVelocity.add(right);
+							finalVelocity.x = finalVelocity.x.clamp(-4, 4);
+							finalVelocity.z = finalVelocity.z.clamp(-4, 4);
+							player.physicsImpostor.setLinearVelocity(finalVelocity, player.getAbsolutePosition());
+						}
 					});
 					this.engine.runRenderLoop(function () {
 						app.scene.render();
