@@ -1,22 +1,21 @@
 require.config({
 	paths: {
 		jquery : 'libs/jquery',
-		babylon : 'libs/babylon',
-		oimo : 'libs/oimo.min'
+		babylon : 'libs/babylon.custom',
+		cannon : 'libs/cannon.min'
 	},
 	shim: {
 		babylon: {
 			exports: 'BABYLON'
 		},
-		oimo: {
-			exports: 'OIMO'
+		cannon: {
+			exports: 'CANNON'
 		}
 	}
 });
 
-require(['app', 'jquery', 'babylon', 'oimo'], function (app, jQuery, babylon, oimo) {
-	app.sayHello();
+require(['app'], function (app) {
 	app.initEngine(document.getElementById('renderCanvas'));
-	app.createPlayground(20);
+	app.createPlayground(50);
 	app.initRendering();
 });
