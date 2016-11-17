@@ -114,7 +114,7 @@ define (
 					];
 					this.playground.size = playgroundSize;
 					this.playground.ground = new Array();
-					var	skybox = BABYLON.Mesh.CreateBox("skyBox", 1000.0, this.scene);
+					var	skybox = BABYLON.Mesh.CreateBox("skyBox", 100.0, this.scene);
 					skybox.infiniteDistance = true;
 					skybox.renderingGroupId = 0;
 					var skyboxMaterial = new BABYLON.StandardMaterial("skyBox", this.scene);
