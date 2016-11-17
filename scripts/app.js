@@ -52,12 +52,14 @@ define (
 		function initCamera(scene, target, canvas) {
 			scene.activeCamera = new BABYLON.ArcRotateCamera("mainCamera", 1, 1, 10, target, scene);
 			scene.activeCamera.attachControl(canvas, false);
+			scene.activeCamera.zoomOnFactor = .005;
+			scene.activeCamera.wheelPrecision = 10;
 			scene.activeCamera.upperAlphaLimit = 0;
 			scene.activeCamera.lowerAlphaLimit = 0;
 			scene.activeCamera.upperBetaLimit = 3.14;
 			scene.activeCamera.lowerBetaLimit = 0.5;
 			scene.activeCamera.upperRadiusLimit = 10;
-			scene.activeCamera.lowerRadiusLimit = 2;
+			scene.activeCamera.lowerRadiusLimit = 0;
 			scene.activeCamera.panningSensibility = 0.5;
 			scene.activeCamera.checkCollisions = true;
 			scene.activeCamera.collisionRadius = new BABYLON.Vector3(1, 1, 1);
