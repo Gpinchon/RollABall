@@ -112,6 +112,18 @@ define (
 					];
 					this.playground.size = playgroundSize;
 					this.playground.ground = new Array();
+					var	skybox = BABYLON.Mesh.CreateBox("skyBox", 1000.0, this.scene);
+					skybox.infiniteDistance = true;
+					skybox.renderingGroupId = 0;
+					var skyboxMaterial = new BABYLON.StandardMaterial("skyBox", this.scene);
+					skybox.material = skyboxMaterial;
+					skyboxMaterial.backFaceCulling = false;
+					skyboxMaterial.disableLighting = true;
+					skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
+					skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
+					skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("./res/skybox/skybox", this.scene);
+					skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
+					var reflTexture = new BABYLON.CubeTexture("./res/skybox/skybox", this.scene);
 					var borderMaterial = new BABYLON.PBRMaterial("borders", this.scene);
 					borderMaterial.microSurface = 0.6;
 					borderMaterial.reflectivityColor = new BABYLON.Color3(0.2, 0.2, 0.2);
@@ -134,6 +146,7 @@ define (
 					ground.material.reflectionTexture.mirrorPlane = new BABYLON.Plane(0, -1.0, 0, 0);
 					ground.material.microSurface = 0.8;
 					ground.material.reflectionTexture.renderList.push.apply(ground.material.reflectionTexture.renderList, this.playground.ground);
+					ground.material.reflectionTexture.renderList.push(skybox);
 					this.playground.ground.push(ground);
 					for (var i = 0;i < 5;i++)
 					{
@@ -142,6 +155,7 @@ define (
 						this.playground.ground[i].checkCollisions = true;
 						this.playground.ground[i].receiveShadows = true;
 					}
+					this.playground.ground.push(skybox);
 					this.playground.sphere = BABYLON.MeshBuilder.CreateSphere("sphere", {diameter: 1}, this.scene);
 					initCamera(this.scene, this.playground.sphere, this.renderCanvas);
 					this.playground.sphere.checkCollisions = false;
@@ -182,14 +196,15 @@ define (
 						bonus[i].applyGravity = true;
 						bonus[i].material = new BABYLON.PBRMaterial("bonus" + i + "mtl", this.scene);
 						bonus[i].material.microSurface = Math.random();
-						bonus[i].material.indexOfRefraction = 0.52;
-						bonus[i].material.linkRefractionWithTransparency = false;
-						bonus[i].material.alpha = (Math.random() + .5).clamp(0.2, 1);
-						//bonus[i].material.alpha = 1.0 / (bonus[i].material.microSurface + 1);
+						bonus[i].material.indexOfRefraction = Math.random();
+						bonus[i].material.linkRefractionWithTransparency = true;
+						bonus[i].material.alpha = Math.random();
 						bonus[i].material.emissiveColor = new BABYLON.Color3(Math.random(), Math.random(), Math.random());
 						bonus[i].material.reflectivityColor = new BABYLON.Color3(Math.random(), Math.random(), Math.random());
 						bonus[i].material.reflectionColor = new BABYLON.Color3(Math.random(), Math.random(), Math.random());
 						bonus[i].material.albedoColor = new BABYLON.Color3(Math.random(), Math.random(), Math.random());
+						bonus[i].material.reflectionTexture = reflTexture;
+						bonus[i].material.refractionTexture = reflTexture;
 						bonus[i].position = new BABYLON.Vector3((Math.random() - .5) * (playgroundSize / 2), 2, (Math.random() - .5) * (playgroundSize / 2));
 						bonus[i].scoreValue = parseInt(Math.random() * 100);
 						bonus[i].receiveShadows = true;
@@ -197,7 +212,6 @@ define (
 						bonus[i].physicsImpostor.registerOnPhysicsCollide(this.playground.sphere.physicsImpostor, function(main, collided){
 							collided.object.material.dispose();
 							collided.object.material = main.object.material;
-							collided.object.material.linkRefractionWithTransparency = true;
 							collided.object.material.reflectionTexture = probe.cubeTexture;
 							collided.object.material.refractionTexture = probe.cubeTexture;
 							main.object.registerAfterRender(function(main){
