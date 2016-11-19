@@ -144,7 +144,7 @@ define (
 					ground.material.albedoTexture.uScale = ground.material.bumpTexture.uScale = playgroundSize / 4;
 					ground.material.albedoTexture.vScale = ground.material.bumpTexture.vScale = playgroundSize / 4;
 					ground.material.reflectivityColor = new BABYLON.Color3(0.5, 0.5, 0.5);
-					ground.material.reflectionTexture = new BABYLON.MirrorTexture("groundMirror", 512, this.scene, true);
+					ground.material.reflectionTexture = new BABYLON.MirrorTexture("groundMirror", 256, this.scene, true);
 					ground.material.reflectionTexture.mirrorPlane = new BABYLON.Plane(0, -1.0, 0, 0);
 					ground.material.microSurface = 0.8;
 					ground.material.reflectionTexture.renderList.push.apply(ground.material.reflectionTexture.renderList, this.playground.ground);
@@ -194,7 +194,7 @@ define (
 							bonus[i].scoreValue = parseInt(1 / diameter * 1000);
 							bonus[i].size = diameter;
 						}
-						bonus[i].checkCollisions = true;
+						bonus[i].checkCollisions = false;
 						bonus[i].applyGravity = true;
 						bonus[i].material = new BABYLON.PBRMaterial("bonus" + i + "mtl", this.scene);
 						bonus[i].material.microSurface = Math.random();
@@ -213,7 +213,7 @@ define (
 						var scene = this.scene;
 						bonus[i].physicsImpostor.registerOnPhysicsCollide(this.playground.sphere.physicsImpostor, function(main, collided){
 							collided.object.material.dispose();
-							collided.object.material = main.object.material;
+							collided.object.material = main.object.material.clone("bonus" + bonus.indexOf(main) + "mtl_clone");
 							collided.object.material.reflectionTexture = probe.cubeTexture;
 							collided.object.material.refractionTexture = probe.cubeTexture;
 							main.object.registerAfterRender(function(main){
@@ -228,17 +228,24 @@ define (
 					ground.material.reflectionTexture.renderList.push.apply(ground.material.reflectionTexture.renderList, bonus);
 					ground.material.reflectionTexture.renderList.push(this.playground.sphere);
 					probe.renderList.push.apply(probe.renderList, bonus);
-					var light = new BABYLON.DirectionalLight("light",  new BABYLON.Vector3(-1, -1, -1), this.scene)
+					var light = new BABYLON.DirectionalLight("light",  new BABYLON.Vector3(-1, -1, -1), this.scene);
+					light.autoUpdateExtends = false;
 					var groundLight = new BABYLON.HemisphericLight("fillLight",  new BABYLON.Vector3(-1, -1, -1), this.scene);
 					groundLight.indensity = 0.001;
 					groundLight.specular = new BABYLON.Color3(0, 0, 0);
-					var shadowGenerator = new BABYLON.ShadowGenerator(4096, light);
+					var shadowGenerator = new BABYLON.ShadowGenerator(1024, light);
 					shadowGenerator.getShadowMap().renderList.push.apply(shadowGenerator.getShadowMap().renderList, bonus);
 					shadowGenerator.getShadowMap().renderList.push(this.playground.ground[0], this.playground.ground[1], this.playground.ground[2], this.playground.ground[3]);
 					shadowGenerator.getShadowMap().renderList.push(this.playground.sphere);
 					shadowGenerator.bias = 0.00001;
 					shadowGenerator.useVarianceShadowMap  = false;
 					shadowGenerator.usePoissonSampling = true;
+					var topCollider = BABYLON.MeshBuilder.CreatePlane("topCollider", {size: playgroundSize}, this.scene);
+					topCollider.rotate(BABYLON.Axis.X, -1.5, BABYLON.Space.LOCAL);
+					topCollider.position.y = 9.5;
+					topCollider.visibility = false;
+					topCollider.setPhysicsState({impostor: BABYLON.PhysicsEngine.BoxImpostor, move:false});
+					console.log(topCollider);
 					return (this.scene);
 				}
 			},
