@@ -71,6 +71,7 @@ define (
 		var application = {
 			engine: null,
 			scene: null,
+			keys: {},
 			playground: {
 				ground: null,
 				sphere: null,
@@ -79,13 +80,26 @@ define (
 			renderCanvas: null,
 			initEngine : function (renderCanvas) {
 				interface.initUI();
+				var	app = this;
 				this.renderCanvas = renderCanvas;
 				if (!this.engine)
 					this.engine = new BABYLON.Engine(renderCanvas, true)
-				var engine = this.engine;
 				window.addEventListener("resize", function () {
-					engine.resize();
+					app.engine.resize();
 				});
+				function updateKeys(event) {
+					app.keys[event.key] = event.type == 'keydown';
+				}
+				BABYLON.Tools.RegisterTopRootEvents([
+					{
+						name: "keydown",
+						handler: updateKeys
+					},
+					{
+						name: "keyup",
+						handler: updateKeys
+					}
+				]);
 				return (this.engine);
 			},
 			getEngine : function () {
@@ -255,31 +269,17 @@ define (
 				{
 					var app = this;
 					var player = this.playground.sphere;
-					var keys = {};
-					function updateKeys(event) {
-						keys[event.code == undefined ? event.key : event.code] = event.type == 'keydown';
-					}
-					BABYLON.Tools.RegisterTopRootEvents([
-						{
-							name: "keydown",
-							handler: updateKeys
-						},
-						{
-							name: "keyup",
-							handler: updateKeys
-						}
-					]);
 					var	moveVertical = 0;
 					var moveHorizontal = 0;
 					this.scene.registerBeforeRender(function () {
 						moveHorizontal = moveVertical = 0;
-						if (keys["ArrowLeft"] || keys["Left"])
+						if (app.keys["Left"] || app.keys["ArrowLeft"])
 							moveHorizontal ++;
-						if (keys["ArrowRight"] || keys["Right"])
+						if (app.keys["Right"] || app.keys["ArrowRight"])
 							moveHorizontal --;
-						if (keys["ArrowUp"] || keys["Up"])
+						if (app.keys["Up"] || app.keys["ArrowUp"])
 							moveVertical ++;
-						if (keys["ArrowDown"] || keys["Down"])
+						if (app.keys["Down"] || app.keys["ArrowDown"])
 							moveVertical --;
 						if (moveHorizontal || moveVertical)
 						{
@@ -299,6 +299,8 @@ define (
 					var ReplaceReflectionTextures = new BABYLON.SceneOptimization(0);
 					ReplaceReflectionTextures.apply = function (scene)
 					{
+						if (!scene.isReady())
+							return (false);
 						var	reflTexture;
 						for (var i = 0; i < scene.textures.length; i++) {
 							if (scene.textures[i].name == "reflTexture")
@@ -321,13 +323,25 @@ define (
 								material.refractionTexture = reflTexture;
 							}
 						});
+						return (true);
 					};
-					var result = new BABYLON.SceneOptimizerOptions(30, 2000);
-					result.optimizations.push(ReplaceReflectionTextures);
-					this.engine.runRenderLoop(function () {
-						app.scene.render();
+					this.scene.executeWhenReady(function () {
+						app.engine.runRenderLoop(function () {
+							app.scene.render();
+						});
 					});
-					BABYLON.SceneOptimizer.OptimizeAsync(this.scene, result);
+					var wrongFPS = 0;
+					this.scene.afterRender = function () {
+						var fps = app.engine.getFps();
+						if (fps == 60)
+							wrongFPS++;
+						if (wrongFPS <= 58)
+							return ;
+						var result = new BABYLON.SceneOptimizerOptions(30, 5000);
+						result.optimizations.push(ReplaceReflectionTextures);
+						BABYLON.SceneOptimizer.OptimizeAsync(app.scene, result);
+						app.scene.afterRender = null;
+					}
 				}
 			}
 		}
