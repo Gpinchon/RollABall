@@ -126,6 +126,7 @@ define (
 					skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("./res/skybox/skybox", this.scene);
 					skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
 					var reflTexture = new BABYLON.CubeTexture("./res/skybox/skybox", this.scene);
+					reflTexture.name = "reflTexture";
 					var borderMaterial = new BABYLON.PBRMaterial("borders", this.scene);
 					borderMaterial.microSurface = 0.6;
 					borderMaterial.reflectivityColor = new BABYLON.Color3(0.2, 0.2, 0.2);
@@ -169,7 +170,7 @@ define (
 					this.playground.sphere.material.albedoColor = new BABYLON.Color3(1, 0, 0);
 					this.playground.sphere.material.reflectionColor = new BABYLON.Color3(1.0, 1.0, 1.0);
 					this.playground.sphere.setPhysicsState({impostor: BABYLON.PhysicsEngine.SphereImpostor, move:true, mass:1, friction:0.8, restitution:0.5});
-					var probe = new BABYLON.ReflectionProbe("main", 256, this.scene);
+					var probe = new BABYLON.ReflectionProbe("sphereProbe", 256, this.scene);
 					probe.renderList.push.apply(probe.renderList, this.playground.ground);
 					probe.attachToMesh(this.playground.sphere);
 					this.playground.sphere.material.reflectionTexture = probe.cubeTexture;
@@ -212,10 +213,11 @@ define (
 						bonus[i].receiveShadows = true;
 						var scene = this.scene;
 						bonus[i].physicsImpostor.registerOnPhysicsCollide(this.playground.sphere.physicsImpostor, function(main, collided){
+							var reflectionTexture = collided.object.material.reflectionTexture;
 							collided.object.material.dispose();
 							collided.object.material = main.object.material.clone("bonus" + bonus.indexOf(main) + "mtl_clone");
-							collided.object.material.reflectionTexture = probe.cubeTexture;
-							collided.object.material.refractionTexture = probe.cubeTexture;
+							collided.object.material.reflectionTexture = reflectionTexture;
+							collided.object.material.refractionTexture = reflectionTexture;
 							main.object.registerAfterRender(function(main){
 								bonus.splice(bonus.indexOf(main), 1);
 								interface.updateScore(main.scoreValue);
@@ -245,7 +247,6 @@ define (
 					topCollider.position.y = 9.5;
 					topCollider.visibility = false;
 					topCollider.setPhysicsState({impostor: BABYLON.PhysicsEngine.BoxImpostor, move:false});
-					console.log(topCollider);
 					return (this.scene);
 				}
 			},
@@ -256,7 +257,6 @@ define (
 					var player = this.playground.sphere;
 					var keys = {};
 					function updateKeys(event) {
-						console.log(event);
 						keys[event.code == undefined ? event.key : event.code] = event.type == 'keydown';
 					}
 					BABYLON.Tools.RegisterTopRootEvents([
@@ -296,9 +296,38 @@ define (
 							player.physicsImpostor.setLinearVelocity(finalVelocity, player.getAbsolutePosition());
 						}
 					});
+					var ReplaceReflectionTextures = new BABYLON.SceneOptimization(0);
+					ReplaceReflectionTextures.apply = function (scene)
+					{
+						var	reflTexture;
+						for (var i = 0; i < scene.textures.length; i++) {
+							if (scene.textures[i].name == "reflTexture")
+							{
+								reflTexture = scene.textures[i];
+								break ;
+							}
+						};
+						scene.materials.forEach(function (material) {
+							if (material.reflectionTexture != undefined
+							&& material.reflectionTexture.name != "reflTexture")
+							{
+								material.reflectionTexture.dispose();
+								material.reflectionTexture = reflTexture;
+							}
+							if (material.refractionTexture != undefined
+							&& material.refractionTexture.name != "reflTexture")
+							{
+								material.refractionTexture.dispose();
+								material.refractionTexture = reflTexture;
+							}
+						});
+					};
+					var result = new BABYLON.SceneOptimizerOptions(30, 2000);
+					result.optimizations.push(ReplaceReflectionTextures);
 					this.engine.runRenderLoop(function () {
 						app.scene.render();
 					});
+					BABYLON.SceneOptimizer.OptimizeAsync(this.scene, result);
 				}
 			}
 		}
