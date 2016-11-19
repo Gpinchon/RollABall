@@ -57,7 +57,7 @@ define (
 			scene.activeCamera.upperAlphaLimit = 0;
 			scene.activeCamera.lowerAlphaLimit = 0;
 			scene.activeCamera.upperBetaLimit = 3.14;
-			scene.activeCamera.lowerBetaLimit = 0.5;
+			scene.activeCamera.lowerBetaLimit = 0;
 			scene.activeCamera.upperRadiusLimit = 10;
 			scene.activeCamera.lowerRadiusLimit = 0;
 			scene.activeCamera.panningSensibility = 0.5;
@@ -256,7 +256,8 @@ define (
 					var player = this.playground.sphere;
 					var keys = {};
 					function updateKeys(event) {
-						keys[event.code] = event.type == 'keydown';
+						console.log(event);
+						keys[event.code == undefined ? event.key : event.code] = event.type == 'keydown';
 					}
 					BABYLON.Tools.RegisterTopRootEvents([
 						{
@@ -271,15 +272,14 @@ define (
 					var	moveVertical = 0;
 					var moveHorizontal = 0;
 					this.scene.registerBeforeRender(function () {
-						moveHorizontal = 0;
-						moveVertical = 0;
-						if (keys["ArrowLeft"])
+						moveHorizontal = moveVertical = 0;
+						if (keys["ArrowLeft"] || keys["Left"])
 							moveHorizontal ++;
-						if (keys["ArrowRight"])
+						if (keys["ArrowRight"] || keys["Right"])
 							moveHorizontal --;
-						if (keys["ArrowUp"])
+						if (keys["ArrowUp"] || keys["Up"])
 							moveVertical ++;
-						if (keys["ArrowDown"])
+						if (keys["ArrowDown"] || keys["Down"])
 							moveVertical --;
 						if (moveHorizontal || moveVertical)
 						{
