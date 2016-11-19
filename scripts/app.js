@@ -187,6 +187,7 @@ define (
 					var probe = new BABYLON.ReflectionProbe("sphereProbe", 256, this.scene);
 					probe.renderList.push.apply(probe.renderList, this.playground.ground);
 					probe.attachToMesh(this.playground.sphere);
+					this.playground.sphere.material.bumpTexture = new BABYLON.Texture("./res/scratchNorm.jpg", this.scene);
 					this.playground.sphere.material.reflectionTexture = probe.cubeTexture;
 					this.playground.sphere.material.refractionTexture = probe.cubeTexture;
 					this.playground.sphere.receiveShadows = true;
@@ -228,10 +229,12 @@ define (
 						var scene = this.scene;
 						bonus[i].physicsImpostor.registerOnPhysicsCollide(this.playground.sphere.physicsImpostor, function(main, collided){
 							var reflectionTexture = collided.object.material.reflectionTexture;
+							var bumpTexture = collided.object.material.bumpTexture;
 							collided.object.material.dispose();
 							collided.object.material = main.object.material.clone("bonus" + bonus.indexOf(main) + "mtl_clone");
 							collided.object.material.reflectionTexture = reflectionTexture;
 							collided.object.material.refractionTexture = reflectionTexture;
+							collided.object.material.bumpTexture = bumpTexture;
 							main.object.registerAfterRender(function(main){
 								bonus.splice(bonus.indexOf(main), 1);
 								interface.updateScore(main.scoreValue);
@@ -296,35 +299,6 @@ define (
 							player.physicsImpostor.setLinearVelocity(finalVelocity, player.getAbsolutePosition());
 						}
 					});
-					var ReplaceReflectionTextures = new BABYLON.SceneOptimization(0);
-					ReplaceReflectionTextures.apply = function (scene)
-					{
-						if (!scene.isReady())
-							return (false);
-						var	reflTexture;
-						for (var i = 0; i < scene.textures.length; i++) {
-							if (scene.textures[i].name == "reflTexture")
-							{
-								reflTexture = scene.textures[i];
-								break ;
-							}
-						};
-						scene.materials.forEach(function (material) {
-							if (material.reflectionTexture != undefined
-							&& material.reflectionTexture.name != "reflTexture")
-							{
-								material.reflectionTexture.dispose();
-								material.reflectionTexture = reflTexture;
-							}
-							if (material.refractionTexture != undefined
-							&& material.refractionTexture.name != "reflTexture")
-							{
-								material.refractionTexture.dispose();
-								material.refractionTexture = reflTexture;
-							}
-						});
-						return (true);
-					};
 					this.scene.executeWhenReady(function () {
 						app.engine.runRenderLoop(function () {
 							app.scene.render();
@@ -337,8 +311,38 @@ define (
 							wrongFPS++;
 						if (wrongFPS <= 58)
 							return ;
-						var result = new BABYLON.SceneOptimizerOptions(30, 5000);
+						var result = new BABYLON.SceneOptimizerOptions(24, 5000);
+						var ReplaceReflectionTextures = new BABYLON.SceneOptimization(1);
+						ReplaceReflectionTextures.apply = function (scene)
+						{
+							if (!scene.isReady())
+								return (false);
+							var	reflTexture;
+							for (var i = 0; i < scene.textures.length; i++) {
+								if (scene.textures[i].name == "reflTexture")
+								{
+									reflTexture = scene.textures[i];
+									break ;
+								}
+							};
+							scene.materials.forEach(function (material) {
+								if (material.reflectionTexture != undefined
+								&& material.reflectionTexture.name != "reflTexture")
+								{
+									material.reflectionTexture.dispose();
+									material.reflectionTexture = reflTexture;
+								}
+								if (material.refractionTexture != undefined
+								&& material.refractionTexture.name != "reflTexture")
+								{
+									material.refractionTexture.dispose();
+									material.refractionTexture = reflTexture;
+								}
+							});
+							return (true);
+						};
 						result.optimizations.push(ReplaceReflectionTextures);
+						result.optimizations.push(new BABYLON.TextureOptimization(0, 128))
 						BABYLON.SceneOptimizer.OptimizeAsync(app.scene, result);
 						app.scene.afterRender = null;
 					}
