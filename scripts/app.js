@@ -128,7 +128,9 @@ define (
 						this.playground.ground[i].position = new BABYLON.Vector3(positions[i].x, positions[i].y, positions[i].z);
 						this.playground.ground[i].material = borderMaterial;
 					}
-					var ground = BABYLON.MeshBuilder.CreateGround("ground", {width: playgroundSize, height: playgroundSize, subdivsions: 1}, this.scene);
+					var ground = BABYLON.MeshBuilder.CreateBox("ground", {}, this.scene);
+					ground.scaling.x = playgroundSize;
+					ground.scaling.z = playgroundSize;
 					ground.material =  new BABYLON.PBRMaterial("tiling", this.scene);
 					ground.material.albedoTexture = new BABYLON.Texture("./res/wood.jpg", this.scene);
 					ground.material.bumpTexture = new BABYLON.Texture("./res/woodNorm.jpg", this.scene);
@@ -232,7 +234,7 @@ define (
 					shadowGenerator.getShadowMap().renderList.push.apply(shadowGenerator.getShadowMap().renderList, bonus);
 					shadowGenerator.getShadowMap().renderList.push(this.playground.ground[0], this.playground.ground[1], this.playground.ground[2], this.playground.ground[3]);
 					shadowGenerator.getShadowMap().renderList.push(this.playground.sphere);
-					shadowGenerator.bias = 0.00001;
+					shadowGenerator.bias = 0.00002;
 					shadowGenerator.useVarianceShadowMap  = false;
 					shadowGenerator.usePoissonSampling = true;
 					var topCollider = BABYLON.MeshBuilder.CreatePlane("topCollider", {size: playgroundSize}, this.scene);
