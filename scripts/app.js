@@ -311,9 +311,9 @@ define (
 						};
 						var result = new BABYLON.SceneOptimizerOptions(24, 5000);
 						result.optimizations.push(ReplaceReflectionTextures);
-						result.optimizations.push(new BABYLON.TextureOptimization(0, 512));
-						result.optimizations.push(new BABYLON.TextureOptimization(1, 256));
-						result.optimizations.push(new BABYLON.HardwareScalingOptimization(2, 4));
+						result.optimizations.push(new BABYLON.HardwareScalingOptimization(0, 4));
+						result.optimizations.push(new BABYLON.TextureOptimization(1, 512));
+						result.optimizations.push(new BABYLON.TextureOptimization(2, 256));
 						BABYLON.SceneOptimizer.OptimizeAsync(app.scene, result);
 						app.scene.afterRender = null;
 					}
