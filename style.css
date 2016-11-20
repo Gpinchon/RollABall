@@ -5,15 +5,27 @@ html, body {
 	overflow: hidden;
 }
 
-interface {
+.interface {
+	margin: 0;
 	position: absolute;
 	color: white;
-	width: 100%;
+	transition: all 2s ease 2s;
 }
 
-bonus {
-	position: absolute;
+#bonus {
+	width: 50%;
+	text-align: right;
 	right: 0;
+}
+
+#score {
+	width: 50%;
+	left: 0;
+}
+
+.invisible {
+	visibility: 100%;
+	left: -100%;
 }
 
 #renderCanvas {

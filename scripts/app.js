@@ -2,7 +2,7 @@ define (
 	function (require) {
 		require('babylon');
 		require('cannon');
-		require('jquery');
+		var interface = require('interface');
 		Number.prototype.clamp = function(min, max) {
 			return Math.min(Math.max(this, min), max);
 		};
@@ -12,43 +12,6 @@ define (
 		Number.prototype.normalize = function(min, max) {
 			return ((this-min)/(max-min));
 		};
-		var interface = {
-			html: $("interface"),
-			score: null,
-			bonus: null,
-			finish: null,
-			restartButton: null,
-			initUI: function () {
-				this.score = this.html.children("score");
-				this.bonus = this.html.children("bonus");
-				this.restartButton = this.html.children("finish").children("button");
-				this.restartButton.click(function (event) {
-					if (application.scene && application.engine)
-					{
-						application.engine.stopRenderLoop();
-						application.scene.dispose();
-						application.scene = null;
-						application.createPlayground(application.playground.size);
-						application.initRendering();
-					}
-				});
-				this.initScores();
-			},
-			initScores: function () {
-				this.score.children()[0].innerHTML = 0;
-				this.bonus.children()[0].innerHTML = 0;
-			},
-			updateScore: function (value) {
-				var	nbr = Number(this.score.children()[0].innerHTML);
-				this.score.children()[0].innerHTML = nbr + value;
-			},
-			updateBonus: function (value) {
-				this.bonus.children()[0].innerHTML = value;
-			},
-			displayFinished: function () {
-
-			}
-		}
 		function initCamera(scene, target, canvas) {
 			scene.activeCamera = new BABYLON.ArcRotateCamera("mainCamera", 1, 1, 10, target, scene);
 			scene.activeCamera.attachControl(canvas, false);
@@ -79,7 +42,7 @@ define (
 			},
 			renderCanvas: null,
 			initEngine : function (renderCanvas) {
-				interface.initUI();
+				interface.initUI(this);
 				var	app = this;
 				this.renderCanvas = renderCanvas;
 				if (!this.engine)
@@ -167,7 +130,7 @@ define (
 					this.playground.ground.push(ground);
 					for (var i = 0;i < 5;i++)
 					{
-						this.playground.ground[i].setPhysicsState({impostor:BABYLON.PhysicsEngine.BoxImpostor, move:false, restitution:0.2});
+						this.playground.ground[i].setPhysicsState({impostor:BABYLON.PhysicsEngine.BoxImpostor, move:false, restitution:0.5});
 						this.playground.ground[i].applyGravity = false;
 						this.playground.ground[i].checkCollisions = true;
 						this.playground.ground[i].receiveShadows = true;
@@ -183,7 +146,7 @@ define (
 					this.playground.sphere.material.reflectivityColor = new BABYLON.Color3(0.5, 0.5, 0.5);
 					this.playground.sphere.material.albedoColor = new BABYLON.Color3(1, 0, 0);
 					this.playground.sphere.material.reflectionColor = new BABYLON.Color3(1.0, 1.0, 1.0);
-					this.playground.sphere.setPhysicsState({impostor: BABYLON.PhysicsEngine.SphereImpostor, move:true, mass:1, friction:0.8, restitution:0.5});
+					this.playground.sphere.setPhysicsState({impostor: BABYLON.PhysicsEngine.SphereImpostor, move:true, mass:5, friction:0.8, restitution:0.5});
 					var probe = new BABYLON.ReflectionProbe("sphereProbe", 256, this.scene);
 					probe.renderList.push.apply(probe.renderList, this.playground.ground);
 					probe.attachToMesh(this.playground.sphere);
@@ -304,12 +267,11 @@ define (
 							app.scene.render();
 						});
 					});
-					var wrongFPS = 0;
+					var wrongFrames = 0;
 					this.scene.afterRender = function () {
 						var fps = app.engine.getFps();
-						if (fps == 60)
-							wrongFPS++;
-						if (wrongFPS <= 58)
+						wrongFrames++;
+						if (wrongFrames <= 60)
 							return ;
 						var result = new BABYLON.SceneOptimizerOptions(24, 5000);
 						var ReplaceReflectionTextures = new BABYLON.SceneOptimization(1);

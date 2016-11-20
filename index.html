@@ -5,13 +5,21 @@
 	<link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
-	<interface>
-		<score>SCORE : <b></b></score>
-		<bonus>BONUS LEFT : <b></b></bonus>
-		<finish>
-			<button id="restartButton">Restart ?</button>
-		</finish>
-	</interface>
+	<div>
+		<div class="interface" id="score" >
+			<span class="text">SCORE : </span>
+			<b class="number"></b>
+		</div>
+		<div class="interface" id="bonus" >
+			<span class="text">BONUS LEFT : </span>
+			<b class="number"></b>
+		</div>
+		<div class="interface" id="menu" >
+			<button class="interface" id="restartButton">
+				<span class="text">Restart ?</span>
+			</button>
+		</div>
+	</div>
 	<canvas id="renderCanvas"></canvas>
 	<script src="scripts/require.js" data-main="scripts/main"></script>
 </body>
