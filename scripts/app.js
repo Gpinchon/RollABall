@@ -51,12 +51,18 @@ define (
 					app.engine.resize();
 				});
 				function updateKeys(event) {
-					if (event.key == "Escape" && event.type == "keydown")
+					if ((event.key == "Escape" || event.key == "Esc") && event.type == "keydown")
 					{
 						if (interface.menu.visible)
+						{
 							interface.menu.makeInvisible(true);
+							app.scene.activeCamera.attachControl(app.renderCanvas, false);
+						}
 						else
+						{
 							interface.menu.makeVisible(true);
+							app.scene.activeCamera.detachControl(app.renderCanvas);
+						}
 					}
 					app.keys[event.key] = event.type == 'keydown';
 				}
@@ -245,6 +251,8 @@ define (
 					var	moveVertical = 0;
 					var moveHorizontal = 0;
 					this.scene.registerBeforeRender(function () {
+						if (interface.menu.visible)
+							return ;
 						moveHorizontal = moveVertical = 0;
 						if (app.keys["Left"] || app.keys["ArrowLeft"])
 							moveHorizontal ++;
@@ -307,6 +315,8 @@ define (
 									material.refractionTexture = reflTexture;
 								}
 							});
+							for (var i = 0; i < scene.reflectionProbes.length; i++)
+								scene.reflectionProbes.dispose();
 							return (true);
 						};
 						var result = new BABYLON.SceneOptimizerOptions(24, 5000);
