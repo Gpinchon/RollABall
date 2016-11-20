@@ -51,6 +51,13 @@ define (
 					app.engine.resize();
 				});
 				function updateKeys(event) {
+					if (event.key == "Escape" && event.type == "keydown")
+					{
+						if (interface.menu.visible)
+							interface.menu.makeInvisible(true);
+						else
+							interface.menu.makeVisible(true);
+					}
 					app.keys[event.key] = event.type == 'keydown';
 				}
 				BABYLON.Tools.RegisterTopRootEvents([
@@ -273,8 +280,7 @@ define (
 						wrongFrames++;
 						if (wrongFrames <= 60)
 							return ;
-						var result = new BABYLON.SceneOptimizerOptions(24, 5000);
-						var ReplaceReflectionTextures = new BABYLON.SceneOptimization(1);
+						var ReplaceReflectionTextures = new BABYLON.SceneOptimization(3);
 						ReplaceReflectionTextures.apply = function (scene)
 						{
 							if (!scene.isReady())
@@ -303,8 +309,11 @@ define (
 							});
 							return (true);
 						};
+						var result = new BABYLON.SceneOptimizerOptions(24, 5000);
 						result.optimizations.push(ReplaceReflectionTextures);
-						result.optimizations.push(new BABYLON.TextureOptimization(0, 128))
+						result.optimizations.push(new BABYLON.TextureOptimization(0, 512));
+						result.optimizations.push(new BABYLON.TextureOptimization(1, 256));
+						result.optimizations.push(new BABYLON.HardwareScalingOptimization(2, 4));
 						BABYLON.SceneOptimizer.OptimizeAsync(app.scene, result);
 						app.scene.afterRender = null;
 					}

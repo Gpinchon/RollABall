@@ -1,24 +1,25 @@
 <!DOCTYPE html>
 <html>
 <head>
+	<meta charset="utf-8">
+	<meta property="og:image" content="./res/preview.jpg">
+	<link rel="icon" href="./res/thumb.png">
 	<title>Roll A Ball !</title>
 	<link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
-	<div>
-		<div class="interface" id="score" >
-			<span class="text">SCORE : </span>
-			<b class="number"></b>
-		</div>
-		<div class="interface" id="bonus" >
-			<span class="text">BONUS LEFT : </span>
-			<b class="number"></b>
-		</div>
-		<div class="interface" id="menu" >
-			<button class="interface" id="restartButton">
-				<span class="text">Restart ?</span>
-			</button>
-		</div>
+	<div class="interface" id="score" >
+		<span class="text">SCORE : </span>
+		<b class="number"></b>
+	</div>
+	<div class="interface" id="bonus" >
+		<span class="text">BONUS LEFT : </span>
+		<b class="number"></b>
+	</div>
+	<div class="interface" id="menu" >
+		<button class="interface" id="restartButton">
+			<span class="text">Restart ?</span>
+		</button>
 	</div>
 	<canvas id="renderCanvas"></canvas>
 	<script src="scripts/require.js" data-main="scripts/main"></script>

@@ -8,17 +8,27 @@ define (
 				this.texts = this.html.children(".text");
 				this.visible = true;
 			};
-			makeVisible() {
+			makeVisible(applyToChildren) {
 				if (!this.visible) {
 					this.visible = true;
 					this.html.removeClass("invisible");
+					if (applyToChildren == true)
+						this.makeChildrenVisible();
 				}
 			};
-			makeInvisible() {
+			makeInvisible(applyToChildren) {
 				if (this.visible) {
 					this.visible = false;
 					this.html.addClass("invisible");
+					if (applyToChildren == true)
+						this.makeChildrenInvisible();
 				}
+			};
+			makeChildrenVisible() {
+				this.html.children().removeClass("invisible");
+			};
+			makeChildrenInvisible() {
+				this.html.children().addClass("invisible");
 			};
 			setInnerHTML(value) {
 				this.html.innerHTML = value;
@@ -36,6 +46,7 @@ define (
 			menu: new InterfaceElement("menu"),
 			restartButton: new InterfaceElement("restartButton"),
 			initUI: function (application) {
+				this.menu.makeInvisible(true);
 				this.restartButton.html.click(function (event) {
 					if (application.scene && application.engine)
 					{
@@ -45,9 +56,9 @@ define (
 						application.createPlayground(application.playground.size);
 						application.initRendering();
 					}
+					interface.menu.makeInvisible(true);
 				});
 				this.initScores();
-				this.menu.makeInvisible();
 			},
 			initScores: function () {
 				this.score.numbers[0].innerHTML = 0;

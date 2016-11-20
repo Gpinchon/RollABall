@@ -5,30 +5,81 @@ html, body {
 	overflow: hidden;
 }
 
+.invisible {
+	font-size: 0 !important;
+	opacity: 0 !important;
+	width: 0% !important;
+	height: 0% !important;
+	border: 0 !important;
+	padding: 0 !important;
+}
+
 .interface {
-	margin: 0;
-	position: absolute;
+	z-index: 1;
+	transition: all 1s ease 0s;
+}
+
+.text {
 	color: white;
-	transition: all 2s ease 2s;
+	font-size: 100%;
+}
+
+.number {
+	color: white;
 }
 
 #bonus {
+	font-size: 5vmin;
+	margin: 0;
+	position: absolute;
 	width: 50%;
 	text-align: right;
 	right: 0;
 }
 
 #score {
+	font-size: 5vmin;
+	margin: 0;
+	position: absolute;
 	width: 50%;
 	left: 0;
 }
 
-.invisible {
-	visibility: 100%;
-	left: -100%;
+#menu {
+	position: absolute;
+	top: 0%;
+	bottom: 0%;
+	left: 0%;
+	right: 0%;
+	margin: auto;
+	z-index: 2;
+	width: 50%;
+	height: 50%;
 }
 
+#restartButton {
+	border: 0;
+	border-radius: 12px;
+	background-color: #555b61;
+	top: 100%;
+	bottom: 100%;
+	margin: auto;
+	font-size: 5vmin;
+	height: 33%;
+	width: 100%;
+	/*transition: background-color 1s ease 0s;*/
+}
+
+#restartButton:hover {
+	background-color: #6a7179;
+}
+
+
 #renderCanvas {
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 0;
 	width: 100%;
 	height: 100%;
 	margin: 0;
