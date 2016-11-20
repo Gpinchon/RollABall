@@ -36,7 +36,6 @@ define (
 			menu: new InterfaceElement("menu"),
 			restartButton: new InterfaceElement("restartButton"),
 			initUI: function (application) {
-				console.log(typeof(this.score.html));
 				this.restartButton.html.click(function (event) {
 					if (application.scene && application.engine)
 					{

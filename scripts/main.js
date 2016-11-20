@@ -15,7 +15,7 @@ require.config({
 });
 
 require(['app'], function (app) {
-	app.InitEngine(document.getElementById('renderCanvas'));
-	app.CreatePlayground(25);
+	app.initEngine(document.getElementById('renderCanvas'));
+	app.createPlayground(25);
 	app.initRendering();
 });
