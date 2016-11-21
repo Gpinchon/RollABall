@@ -128,7 +128,7 @@ define (
 						this.playground.ground[i].position = new BABYLON.Vector3(positions[i].x, positions[i].y, positions[i].z);
 						this.playground.ground[i].material = borderMaterial;
 					}
-					var ground = BABYLON.MeshBuilder.CreateBox("ground", {}, this.scene);
+					var ground = BABYLON.MeshBuilder.CreateGround("ground", {subdivisions:1}, this.scene);
 					ground.scaling.x = playgroundSize;
 					ground.scaling.z = playgroundSize;
 					ground.material =  new BABYLON.PBRMaterial("tiling", this.scene);
