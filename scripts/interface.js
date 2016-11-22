@@ -1,6 +1,4 @@
-define (
-	function (argument) {
-		require('jquery');
+define(['jquery'],	function($) {
 		class InterfaceElement {
 			constructor(id) {
 				this.html = $(".interface#" + id);
@@ -36,7 +34,7 @@ define (
 			getInnerHTML() {
 				return (this.html.innerHTML);
 			};
-			appendInnerHTML(value){
+			appendInnerHTML(value) {
 				this.setInnerHTML(this.getInnerHTML() + value);
 			};
 		};

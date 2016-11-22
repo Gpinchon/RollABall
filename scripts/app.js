@@ -1,16 +1,6 @@
-define (
-	function (require) {
-		require('babylon');
-		require('cannon');
-		var interface = require('interface');
+define (['babylon', 'cannon', 'interface'], function (BABYLON, CANNON, interface) {
 		Number.prototype.clamp = function(min, max) {
 			return Math.min(Math.max(this, min), max);
-		};
-		Number.prototype.cycle = function(min, max) {
-			return (this < min ? max : this > max ? min : this);
-		};
-		Number.prototype.normalize = function(min, max) {
-			return ((this-min)/(max-min));
 		};
 		function initCamera(scene, target, canvas) {
 			scene.activeCamera = new BABYLON.ArcRotateCamera("mainCamera", 1, 1, 10, target, scene);
@@ -50,9 +40,13 @@ define (
 				window.addEventListener("resize", function () {
 					app.engine.resize();
 				});
+				var lastTime = new Date().getTime();
 				function updateKeys(event) {
 					if ((event.key == "Escape" || event.key == "Esc") && event.type == "keydown")
 					{
+						var newTime = new Date().getTime();
+						if (newTime - lastTime < 2000)
+							return ;
 						if (interface.menu.visible)
 						{
 							interface.menu.makeInvisible(true);
@@ -63,6 +57,7 @@ define (
 							interface.menu.makeVisible(true);
 							app.scene.activeCamera.detachControl(app.renderCanvas);
 						}
+						lastTime = newTime;
 					}
 					app.keys[event.key] = event.type == 'keydown';
 				}
@@ -286,10 +281,10 @@ define (
 					});
 					var wrongFrames = 0;
 					this.scene.afterRender = function () {
-						var fps = app.engine.getFps();
 						wrongFrames++;
 						if (wrongFrames <= 60)
 							return ;
+						var fps = app.engine.getFps();
 						var ReplaceReflectionTextures = new BABYLON.SceneOptimization(3);
 						ReplaceReflectionTextures.apply = function (scene)
 						{
