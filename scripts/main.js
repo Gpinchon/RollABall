@@ -1,7 +1,7 @@
 require.config({
 	paths: {
 		jquery : 'libs/jquery',
-		babylon : 'libs/babylon.custom',
+		babylon : 'http://babylonjs.com/babylon',
 		cannon : 'libs/cannon.min'
 	},
 	shim: {
