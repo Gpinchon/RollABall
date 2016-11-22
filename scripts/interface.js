@@ -38,7 +38,7 @@ define(['jquery'],	function($) {
 				this.setInnerHTML(this.getInnerHTML() + value);
 			};
 		};
-		var interface = {
+		var UI = {
 			score: new InterfaceElement("score"),
 			bonus: new InterfaceElement("bonus"),
 			menu: new InterfaceElement("menu"),
@@ -54,7 +54,7 @@ define(['jquery'],	function($) {
 						application.createPlayground(application.playground.size);
 						application.initRendering();
 					}
-					interface.menu.makeInvisible(true);
+					UI.menu.makeInvisible(true);
 				});
 				this.initScores();
 			},
@@ -76,6 +76,6 @@ define(['jquery'],	function($) {
 				this.menu.makeInvisible();
 			}
 		}
-		return (interface);
+		return (UI);
 	}
 );
