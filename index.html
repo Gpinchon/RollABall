@@ -19,10 +19,32 @@
 		<span class="text">BONUS LEFT : </span>
 		<b class="number"></b>
 	</div>
+	<div class="interface" id="menuKey">
+		<span style="line-height: 8vmin;" class="text">Display Menu : </span>
+		<div id="escapeKey">Esc</div>
+	</div>
 	<div class="interface invisible" id="menu" >
 		<button class="interface" id="restartButton">
 			<span class="text">Restart ?</span>
 		</button>
+		<table class="interface invisible" id="keys">
+			<tr>
+				<td width="70%">
+					<span class="text" style="float: left;width: 50%;">Move : </span>
+				</td>
+				<td>
+					<img id="arrowImage" src="./res/UI/arrows.png"/>
+				</td>
+			</tr>
+			<tr>
+				<td width="70%">
+					<span class="text" style="float: left;width: 50%;">Camera : </span>
+				</td>
+				<td>
+					<img id="mouseImage" src="./res/UI/mouse.png">
+				</td>
+			</tr>
+		</table>
 	</div>
 	<canvas id="renderCanvas"></canvas>
 	<script src="scripts/require.js" data-main="scripts/main.min"></script>
